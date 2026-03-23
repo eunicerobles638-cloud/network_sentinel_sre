@@ -10,7 +10,7 @@ I built this to practice network automation and logging in a Linux environment.
 
 ### How to use:
 1. **Clone the repo:**
-   `git clone https://github.com/eunicerobles638-cloud/network-uptime-automation.git`
+   `git clone https://github.com/YOUR_USERNAME/network-uptime-automation.git`
 2. **Go to the folder:**
    `cd network-uptime-automation`
 3. **Run the script:**
