@@ -1,29 +1,28 @@
 # Network Sentinel 🛰️
+A Python tool I made to automatically check if my network and favorite servers are online. It pings multiple targets and logs the results so I can track any downtime.
 
-A Python-based network telemetry tool designed for automated service availability monitoring and incident logging.
+I built this to practice network automation and logging in a Linux environment.
 
-## 🛠️ Features
-- **Service Monitoring:** Tracks the reachability of critical network targets using ICMP protocols.
-- **Automated Logging:** Built-in logic to record real-time status updates into a structured CSV format.
-- **Incident Alerting:** Identifies service downtime and triggers system-level notifications for immediate diagnostics.
-- **Linux Integration:** Seamlessly executes network-level commands and verifies connectivity across Linux environments.
+### Key Features:
+* **Connectivity Check:** Uses ICMP pings to verify if Google, GitHub, and DNS servers are reachable.
+* **Auto-Logging:** Every check is saved in `network_log.csv` with a timestamp for future debugging.
+* **Simple Status:** Gives a quick "OPERATIONAL" or "DEGRADED" report after every run.
 
-## 📂 Project Structure
-- `sentinel.py`: The primary automation script for network health checks and status probing.
-- `network_log.csv`: Structured telemetry file containing historical status records.
-
-## 🚀 Getting Started
-1. **Clone the repository:**
-   `git clone https://github.com/YOUR_USERNAME/network-sentinel-sre.git`
-2. **Navigate to the directory:**
-   `cd network-sentinel-sre`
-3. **Run the monitor:**
+### How to use:
+1. **Clone the repo:**
+   `git clone https://github.com/eunicerobles638-cloud/network-uptime-automation.git`
+2. **Go to the folder:**
+   `cd network-uptime-automation`
+3. **Run the script:**
    `python sentinel.py`
 
-## 📊 Sample Output
+### Sample Output:
 ```text
-[2026-03-16 01:05:12] 8.8.8.8: UP
-[2026-03-16 01:05:13] github.com: UP
-[2026-03-16 01:05:15] aws.amazon.com: UP
+--- Network Sentinel Check: 2026-03-24 02:45:10 ---
+[UP] 8.8.8.8
+[UP] github.com
+[UP] google.com
+
 System Status: OPERATIONAL ✅
+---------------------------------------------
 

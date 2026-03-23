@@ -1,49 +1,42 @@
+#!/usr/bin/env python
 import os
+import platform
+import subprocess
 import time
-import csv
 from datetime import datetime
 
-# --- CONFIGURATION ---
+# List of servers to monitor (Standard for DevOps)
 TARGETS = ["8.8.8.8", "github.com", "google.com"]
 LOG_FILE = "network_log.csv"
-CHECK_INTERVAL = 60  # seconds
 
 def check_ping(hostname):
-    # -c 1 (1 packet), -W 2 (2 seconds timeout)
-    response = os.system(f"ping -c 1 -W 2 {hostname} > /dev/null 2>&1")
-    return "UP" if response == 0 else "DOWN"
+    # Standard ping command for Linux/macOS
+    param = '-c' if platform.system().lower() != 'windows' else '-n'
+    command = ['ping', param, '1', hostname]
+    return subprocess.call(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
 
-def init_log():
-    if not os.path.exists(LOG_FILE):
-        with open(LOG_FILE, "w", newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow(["Timestamp", "Target", "Status"])
-
-def notify_alert(target):
-    # Termux-specific notification
-    os.system(f'termux-notification --title "NETWORK ALERT" --content "{target} is DOWN!" --priority high')
-
-def start_sentinel():
-    init_log()
-    print(f"🛰️ Sentinel Active. Monitoring: {', '.join(TARGETS)}")
+def run_sentinel():
+    print(f"--- Network Sentinel Check: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ---")
     
-    try:
-        while True:
-            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            for target in TARGETS:
-                status = check_ping(target)
-                print(f"[{now}] {target}: {status}")
-                
-                with open(LOG_FILE, "a", newline="") as f:
-                    writer = csv.writer(f)
-                    writer.writerow([now, target, status])
-                
-                if status == "DOWN":
-                    notify_alert(target)
+    with open(LOG_FILE, "a") as f:
+        all_up = True
+        for target in TARGETS:
+            status = "UP" if check_ping(target) else "DOWN"
+            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            log_entry = f"{timestamp}, {target}, {status}\n"
             
-            time.sleep(CHECK_INTERVAL)
-    except KeyboardInterrupt:
-        print("\n🛑 Sentinel stopped by user.")
+            f.write(log_entry)
+            print(f"[{status}] {target}")
+            
+            if status == "DOWN":
+                all_up = False
+                
+        if all_up:
+            print("\nSystem Status: OPERATIONAL ✅")
+        else:
+            print("\nSystem Status: DEGRADED ⚠️")
+    print("-" * 45)
 
 if __name__ == "__main__":
-    start_sentinel()
+    run_sentinel()
+
